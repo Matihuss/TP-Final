@@ -6,10 +6,10 @@ Object
 	poolDictionaries: ''
 	category: 'TP - Comedor'!
 
-!Comedor methodsFor: 'accessing' stamp: 'MEHR 23/Nov/2026, 9:18:06 pm (UTC)'!
+!Comedor methodsFor: 'accessing' stamp: 'V 24/Nov/2026, 1:42:33 am (UTC)'!
 estadoDeAperturaDelDia: unDia hora: unaHora
 	^((self diasDeApertura includes: unDia)
-	and: [unaHora >= self horaDeApertura and: [unaHora < self horaDeCierre]])
+	and: [self horaDeApertura <= unaHora and: [unaHora < self horaDeCierre]])
 		ifTrue: [#abierto]
 		ifFalse: [#cerrado]! !
 
