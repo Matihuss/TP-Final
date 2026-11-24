@@ -56,10 +56,18 @@ precio
 !classDefinition: #ProductoDeGondola category: #'TP - Comedor'!
 Object
 	subclass: #ProductoDeGondola
-	instanceVariableNames: ''
+	instanceVariableNames: 'precio'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TP - Comedor'!
+
+!ProductoDeGondola methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 2:51:24 am (UTC)'!
+inicializarConPrecio: unPrecio 
+	precio := unPrecio! !
+
+!ProductoDeGondola methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 2:52:48 am (UTC)'!
+precio
+	^precio! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -67,13 +75,9 @@ Object
 ProductoDeGondola class
 	instanceVariableNames: 'precio'!
 
-!ProductoDeGondola class methodsFor: 'as yet unclassified' stamp: 'MEHR 23/Nov/2026, 10:25:21 pm (UTC)'!
+!ProductoDeGondola class methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 2:47:16 am (UTC)'!
 conPrecio: unPrecio
-	precio := unPrecio.! !
-
-!ProductoDeGondola class methodsFor: 'as yet unclassified' stamp: 'MEHR 23/Nov/2026, 10:25:58 pm (UTC)'!
-precio
-	^precio! !
+	^ self new inicializarConPrecio: unPrecio! !
 
 
 !classDefinition: #ComedorTest category: #'TP - Comedor'!
@@ -126,11 +130,15 @@ test005_ElMenuDelDiaVale3600
 
 Assert that: unMenuDelDia precio isEqualTo: 3600 * peso! !
 
-!ComedorTest methodsFor: 'tests' stamp: 'MEHR 23/Nov/2026, 10:24:32 pm (UTC)'!
+!ComedorTest methodsFor: 'tests' stamp: 'V 24/Nov/2026, 2:55:37 am (UTC)'!
 test006_ElPrecioDeUnProductoDeGondola_DependeDelProducto
 
- | alfajorDeGondola |
+ | alfajorDeGondola bizcochosSalados unaGaseosa |
 
- alfajorDeGondola := ProductoDeGondola conPrecio: 1000 * peso.
+alfajorDeGondola := ProductoDeGondola conPrecio: 1000 * peso.
+bizcochosSalados := ProductoDeGondola conPrecio: 1200 * peso.
+unaGaseosa := ProductoDeGondola conPrecio: 1500 * peso.
 
-Assert that: alfajorDeGondola precio isEqualTo: 1000 * peso! !
+Assert that: alfajorDeGondola precio isEqualTo: 1000 * peso.
+Assert that: bizcochosSalados precio isEqualTo: 1200 * peso.
+Assert that: unaGaseosa precio isEqualTo: 1500 * peso! !
