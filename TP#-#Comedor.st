@@ -1,7 +1,7 @@
 !classDefinition: #Comedor category: #'TP - Comedor'!
 Object
 	subclass: #Comedor
-	instanceVariableNames: ''
+	instanceVariableNames: 'stock'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TP - Comedor'!
@@ -25,6 +25,20 @@ horaDeApertura
 !Comedor methodsFor: 'private' stamp: 'MEHR 23/Nov/2026, 9:19:53 pm (UTC)'!
 horaDeCierre
 	^20! !
+
+
+!Comedor methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 9:07:18 pm (UTC)'!
+registrarLegajo: unLegajo 
+	^ Tarjeta new legajo: unLegajo saldo: 0 * peso! !
+
+!Comedor methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 11:47:04 pm (UTC)'!
+stockDe: unProducto 
+	^stock ! !
+
+
+!Comedor methodsFor: 'initialization' stamp: 'V 24/Nov/2026, 11:44:26 pm (UTC)'!
+initialize
+	stock := 3 ! !
 
 
 !classDefinition: #MenuDelDia category: #'TP - Comedor'!
@@ -73,11 +87,29 @@ precio
 
 !classDefinition: 'ProductoDeGondola class' category: #'TP - Comedor'!
 ProductoDeGondola class
-	instanceVariableNames: 'precio'!
+	instanceVariableNames: ''!
 
 !ProductoDeGondola class methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 2:47:16 am (UTC)'!
 conPrecio: unPrecio
 	^ self new inicializarConPrecio: unPrecio! !
+
+
+!classDefinition: #Tarjeta category: #'TP - Comedor'!
+Object
+	subclass: #Tarjeta
+	instanceVariableNames: 'legajo saldo'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TP - Comedor'!
+
+!Tarjeta methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 9:07:59 pm (UTC)'!
+legajo: unLegajo saldo: unSaldo 
+	legajo := unLegajo.
+	saldo := unSaldo! !
+
+!Tarjeta methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 9:06:19 pm (UTC)'!
+saldo
+	^ saldo! !
 
 
 !classDefinition: #ComedorTest category: #'TP - Comedor'!
@@ -142,3 +174,39 @@ unaGaseosa := ProductoDeGondola conPrecio: 1500 * peso.
 Assert that: alfajorDeGondola precio isEqualTo: 1000 * peso.
 Assert that: bizcochosSalados precio isEqualTo: 1200 * peso.
 Assert that: unaGaseosa precio isEqualTo: 1500 * peso! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'V 24/Nov/2026, 8:58:55 pm (UTC)'!
+test007_ElSaldoDeLaTarjetaAlRegistrarseEsDe0Pesos
+ 
+ | unComedor unaTarjeta |
+unComedor := Comedor new.
+
+ unaTarjeta := unComedor registrarLegajo: 100. 
+ 
+  Assert that: unaTarjeta saldo isEqualTo: 0 * peso.! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'V 24/Nov/2026, 11:05:26 pm (UTC)'!
+test008_ElComedorComienzaConUnStockDe3MenuesEstudiantiles
+
+ | unComedor |
+unComedor := Comedor new.
+
+ Assert that: (unComedor stockDe: MenuEstudiantil) isEqualTo: 3! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'V 25/Nov/2026, 12:34:30 am (UTC)'!
+test009_ElComedorComienzaConUnStockDe4MenuesDelDia
+
+  | unComedor |
+unComedor := Comedor new.
+
+ Assert that: (unComedor stockDe: MenuDelDia) isEqualTo: 4! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'V 25/Nov/2026, 12:45:52 am (UTC)'!
+test010_ElComedorReponeElStockDeMenuEstudiantil
+
+ | unComedor |
+unComedor := Comedor new.
+
+ unComedor reponerStockDe: MenuEstudiantil cantidad: 5.
+
+ Assert that: (unComedor stockDe: MenuEstudiantil) isEqualTo: 5! !
