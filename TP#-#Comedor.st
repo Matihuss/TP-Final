@@ -1,7 +1,7 @@
 !classDefinition: #Comedor category: #'TP - Comedor'!
 Object
 	subclass: #Comedor
-	instanceVariableNames: 'stock'
+	instanceVariableNames: 'stock stockDeMenuesEstudiantiles stockDeMenuesDelDia'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TP - Comedor'!
@@ -12,6 +12,20 @@ estadoDeAperturaDelDia: unDia hora: unaHora
 	and: [self horaDeApertura <= unaHora and: [unaHora < self horaDeCierre]])
 		ifTrue: [#abierto]
 		ifFalse: [#cerrado]! !
+
+!Comedor methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 2:49:32 am (UTC)'!
+reponerStockDeMenuesEstudiantiles: unaCantidad
+	stockDeMenuesEstudiantiles := stockDeMenuesEstudiantiles + unaCantidad! !
+
+!Comedor methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 2:33:26 am (UTC)'!
+stockDeMenuesDelDia
+
+	^stockDeMenuesDelDia! !
+
+!Comedor methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 2:34:13 am (UTC)'!
+stockDeMenuesEstudiantiles
+	
+	^stockDeMenuesEstudiantiles! !
 
 
 !Comedor methodsFor: 'private' stamp: 'MEHR 23/Nov/2026, 9:36:03 pm (UTC)'!
@@ -31,14 +45,11 @@ horaDeCierre
 registrarLegajo: unLegajo 
 	^ Tarjeta new legajo: unLegajo saldo: 0 * peso! !
 
-!Comedor methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 11:47:04 pm (UTC)'!
-stockDe: unProducto 
-	^stock ! !
 
-
-!Comedor methodsFor: 'initialization' stamp: 'V 24/Nov/2026, 11:44:26 pm (UTC)'!
+!Comedor methodsFor: 'initialization' stamp: 'MEHR 25/Nov/2026, 2:20:02 am (UTC)'!
 initialize
-	stock := 3 ! !
+	stockDeMenuesEstudiantiles := 3.
+	stockDeMenuesDelDia := 4! !
 
 
 !classDefinition: #MenuDelDia category: #'TP - Comedor'!
@@ -53,6 +64,10 @@ Object
 precio
 	^3600 * peso.! !
 
+!MenuDelDia methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 3:48:40 am (UTC)'!
+precioParaPersonal
+	^self precio * (80/100)! !
+
 
 !classDefinition: #MenuEstudiantil category: #'TP - Comedor'!
 Object
@@ -65,6 +80,66 @@ Object
 !MenuEstudiantil methodsFor: 'accessing' stamp: 'MEHR 23/Nov/2026, 10:08:50 pm (UTC)'!
 precio
 	^3000 * peso! !
+
+
+!classDefinition: #Pedido category: #'TP - Comedor'!
+Object
+	subclass: #Pedido
+	instanceVariableNames: 'productos precio comensal medioDePago precioFinal'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TP - Comedor'!
+
+!Pedido methodsFor: 'initialization' stamp: 'MEHR 25/Nov/2026, 3:45:02 am (UTC)'!
+inicializarDe: unComensal pagadoCon: unMedioDePago
+	comensal := unComensal.
+	medioDePago := unMedioDePago! !
+
+!Pedido methodsFor: 'initialization' stamp: 'MEHR 25/Nov/2026, 3:52:30 am (UTC)'!
+initialize
+	productos := #().
+	precio := 0 * peso.
+	precioFinal := 0 * peso! !
+
+
+!Pedido methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 3:47:58 am (UTC)'!
+agregar: unProducto
+	productos := productos copyWith: unProducto.
+	precio := precio + unProducto precio.
+	precioFinal := precioFinal + (comensal precioConTarjetaDe: unProducto)! !
+
+!Pedido methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 3:34:20 am (UTC)'!
+precio
+	
+	^precio! !
+
+!Pedido methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 3:59:04 am (UTC)'!
+precioFinal
+	
+	^precioFinal! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Pedido class' category: #'TP - Comedor'!
+Pedido class
+	instanceVariableNames: ''!
+
+!Pedido class methodsFor: 'instance creation' stamp: 'MEHR 25/Nov/2026, 3:44:42 am (UTC)'!
+de: unComensal pagadoCon: unMedioDePago
+	^self new inicializarDe: unComensal pagadoCon: unMedioDePago! !
+
+
+!classDefinition: #Personal category: #'TP - Comedor'!
+Object
+	subclass: #Personal
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TP - Comedor'!
+
+!Personal methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 3:48:24 am (UTC)'!
+precioConTarjetaDe: unProducto
+	^unProducto precioParaPersonal! !
 
 
 !classDefinition: #ProductoDeGondola category: #'TP - Comedor'!
@@ -82,6 +157,11 @@ inicializarConPrecio: unPrecio
 !ProductoDeGondola methodsFor: 'as yet unclassified' stamp: 'V 24/Nov/2026, 2:52:48 am (UTC)'!
 precio
 	^precio! !
+
+
+!ProductoDeGondola methodsFor: 'accessing' stamp: 'MEHR 25/Nov/2026, 4:03:03 am (UTC)'!
+precioParaPersonal
+	^self precio * (80/100)! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -185,28 +265,56 @@ unComedor := Comedor new.
  
   Assert that: unaTarjeta saldo isEqualTo: 0 * peso.! !
 
-!ComedorTest methodsFor: 'tests' stamp: 'V 24/Nov/2026, 11:05:26 pm (UTC)'!
+!ComedorTest methodsFor: 'tests' stamp: 'MEHR 25/Nov/2026, 2:33:44 am (UTC)'!
 test008_ElComedorComienzaConUnStockDe3MenuesEstudiantiles
 
  | unComedor |
 unComedor := Comedor new.
 
- Assert that: (unComedor stockDe: MenuEstudiantil) isEqualTo: 3! !
+ Assert that: unComedor stockDeMenuesEstudiantiles isEqualTo: 3! !
 
-!ComedorTest methodsFor: 'tests' stamp: 'V 25/Nov/2026, 12:34:30 am (UTC)'!
+!ComedorTest methodsFor: 'tests' stamp: 'MEHR 25/Nov/2026, 2:32:32 am (UTC)'!
 test009_ElComedorComienzaConUnStockDe4MenuesDelDia
 
   | unComedor |
 unComedor := Comedor new.
 
- Assert that: (unComedor stockDe: MenuDelDia) isEqualTo: 4! !
+ Assert that: unComedor stockDeMenuesDelDia isEqualTo: 4! !
 
-!ComedorTest methodsFor: 'tests' stamp: 'V 25/Nov/2026, 12:45:52 am (UTC)'!
-test010_ElComedorReponeElStockDeMenuEstudiantil
+!ComedorTest methodsFor: 'tests' stamp: 'MEHR 25/Nov/2026, 2:47:00 am (UTC)'!
+test010_ElComedorReponeElStockDeMenuesEstudiantiles
 
- | unComedor |
-unComedor := Comedor new.
+	| unComedor |
 
- unComedor reponerStockDe: MenuEstudiantil cantidad: 5.
+	unComedor := Comedor new.
 
- Assert that: (unComedor stockDe: MenuEstudiantil) isEqualTo: 5! !
+	unComedor reponerStockDeMenuesEstudiantiles: 5.
+
+	Assert that: unComedor stockDeMenuesEstudiantiles isEqualTo: 8! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'MEHR 25/Nov/2026, 4:02:24 am (UTC)'!
+test011_ElPrecioDeUnPedidoEsLaSumaDeLosPreciosDeSusProductos
+
+	| unComedor unaTarjeta unPedido |
+
+	unComedor := Comedor new.
+	unaTarjeta := unComedor registrarLegajo: 100.
+
+	unPedido := Pedido de: Personal new pagadoCon: unaTarjeta.
+	unPedido agregar: MenuDelDia new.
+	unPedido agregar: (ProductoDeGondola conPrecio: 1000 * peso).
+
+	Assert that: unPedido precio isEqualTo: 4600 * peso! !
+
+!ComedorTest methodsFor: 'tests' stamp: 'MEHR 25/Nov/2026, 3:44:02 am (UTC)'!
+test012_UnPersonalPagaElMenuDelDiaConTarjetaConUn20PorCientoDeDescuento
+
+	| unComedor unaTarjeta unPedido |
+
+	unComedor := Comedor new.
+	unaTarjeta := unComedor registrarLegajo: 100.
+
+	unPedido := Pedido de: Personal new pagadoCon: unaTarjeta.
+	unPedido agregar: MenuDelDia new.
+
+	Assert that: unPedido precioFinal isEqualTo: 2880 * peso! !
